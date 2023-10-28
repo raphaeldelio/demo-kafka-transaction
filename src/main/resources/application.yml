@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: kafka-transaction-demo
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  kafka:
+    producer:
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      transaction-id-prefix: "tx-"
+      acks: all
+      properties:
+        enable.idempotence: true
+
+    consumer:
+      enable-auto-commit: false
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        isolation.level: read_committed
+
+
+
+logging:
+  level:
+    org:
+      apache:
+        kafka: error
+      springframework:
+        orm:
+          jpa:
+            JpaTransactionManager: trace
+        kafka:
+          transaction: trace
+          listener:
+            KafkaMessageListenerContainer: error
+
